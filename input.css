@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.active {
+  transform: translateX(20px);
+  color: white;
+}
+
+@layer utilities {
+  .nav::after {
+    @apply content-[''] bg-sky-500 h-[1px] w-[0%] left-0 -bottom-[1px] absolute duration-300;
+  }
+  .nav::after:hover {
+    @apply w-[100%];
+  }
+  .nav.active::after {
+    @apply content-[''] bg-sky-500 h-[1px] w-[100%] left-0 -bottom-[1px] absolute duration-300;
+  }
+}
