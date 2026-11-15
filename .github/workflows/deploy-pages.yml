@@ -35,11 +35,22 @@ jobs:
         env:
           PAGES_BASE: ${{ vars.PAGES_BASE }}
 
+      # Locally the static site lands in dist/client; on GitHub's runners the
+      # build writes it to .output/public. Publish whichever exists.
+      - name: Locate static output
+        id: pages-dir
+        run: |
+          if [ -f ".output/public/index.html" ]; then dir=".output/public"
+          elif [ -f "dist/client/index.html" ]; then dir="dist/client"
+          else echo "No built index.html found" >&2; exit 1; fi
+          touch "$dir/.nojekyll"
+          echo "path=$dir" >> "$GITHUB_OUTPUT"
+
       - uses: actions/configure-pages@v5
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dist/client
+          path: ${{ steps.pages-dir.outputs.path }}
 
   deploy:
     needs: build
