@@ -9,32 +9,15 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
-// GitHub Pages base path.
-//   username.github.io/repo-name  ->  "/repo-name/"
-//   username.github.io            ->  "/"  (repo named "username.github.io")
-//   custom domain                 ->  "/"
-// In CI this is read from GITHUB_REPOSITORY ("owner/repo") so the workflow never
-// needs editing. Locally, set PAGES_BASE="/repo-name/" to test the real URL shape.
-function resolveBase(): string {
-  const override = process.env.PAGES_BASE;
-  if (override && override.trim()) {
-    const trimmed = override.trim().replace(/\/+$/, "");
-    return trimmed === "" ? "/" : `${trimmed}/`;
-  }
-
-  const repo = process.env.GITHUB_REPOSITORY;
-  if (repo && repo.includes("/")) {
-    const name = repo.split("/")[1];
-    // A repo named "<owner>.github.io" is served from the domain root.
-    return name.endsWith(".github.io") ? "/" : `/${name}/`;
-  }
-
-  return "/";
-}
+import { resolvePagesBase } from "./src/lib/pages-base";
 
 export default defineConfig({
   vite: {
-    base: resolveBase(),
+    // Where the site is served from. See src/lib/pages-base.ts and the README.
+    base: resolvePagesBase({
+      PAGES_BASE: process.env["PAGES_BASE"],
+      GITHUB_REPOSITORY: process.env["GITHUB_REPOSITORY"],
+    }),
   },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).

@@ -33,3 +33,4 @@ use the editor.
 
 - Portfolio content (projects, skills, links, write-up repo URL) lives in `src/lib/portfolio-data.ts`; sections in `src/components/portfolio/` only render it. Why: the owner edits content in one place.
 - The site is one page at `/` with in-page `#section` anchors, by explicit owner request; no backend, forms or login.
+- The static export is prerendered to `dist/client`, and its URL prefix comes from `resolvePagesBase` in `src/lib/pages-base.ts`. Why: the same repo must deploy to any GitHub Pages address (domain root or project subfolder) without editing the deploy workflow.
